@@ -13,7 +13,7 @@ const httpOptions = {
   providedIn: "root",
 })
 export class UserService {
-  url: any = "http://localhost:4200/users/";
+  url: any = "http://localhost:4200/users";
   errorSubject: any = new BehaviorSubject<any>(null);
   errorMessage: any = this.errorSubject.asObservable();
   userSubject: any = new BehaviorSubject<any>(null);
@@ -23,18 +23,21 @@ export class UserService {
 
   login(Username: string, Password: string): any {
     this.http
-      .post(`${this.url}login`, { Username, Password }, httpOptions)
+      .post(`${this.url}/login`, { Username, Password }, httpOptions)
       .toPromise()
       .then((res: any) => {
         if (res && res.token) {
-          sessionStorage.setItem("token", res.token);
+          console.log("LOGIN res = ", res);
+          sessionStorage.setItem("jwt", res.token);
           this.errorSubject.next(null);
           if (res.user) {
+            console.log("LOGIN res.user = ", res.user);
             this.userSubject.next(res.user);
+            sessionStorage.setItem("userId", res.user.id);
           }
-          this.router.navigateByUrl("dashboard");
-        } else if (res.message) {
-          this.errorSubject.next(res.message);
+          this.router.navigateByUrl("");
+        } else if (res.Message) {
+          this.errorSubject.next(res.Message);
         }
       })
       .catch((err) => {
@@ -53,22 +56,21 @@ export class UserService {
 
   register(Username: string, Email: string, Password: string) {
     this.http
-      .post(`${this.url}register`, { Username, Email, Password }, httpOptions)
+      .post(`${this.url}/register`, { Username, Email, Password }, httpOptions)
       .toPromise()
       .then((res: any) => {
-        console.log("REGISTER res = ", res);
         if (res && res.token) {
-          sessionStorage.setItem("token", res.token);
+          console.log("REGISTER res = ", res);
+          sessionStorage.setItem("jwt", res.token);
           this.errorSubject.next(null);
           if (res.user) {
             console.log("REGISTER res.user = ", res.user);
             this.userSubject.next(res.user);
+            // sessionStorage.setItem("userId", res.user.ID);
           }
-          this.router.navigateByUrl("dashboard");
-        } else if (res.message) {
-          console.log("REGISTER res = ", res);
-
-          this.errorSubject.next(res.message);
+          this.router.navigateByUrl("");
+        } else if (res.Message) {
+          this.errorSubject.next(res.Message);
         }
       })
       .catch((err) => {
@@ -87,11 +89,59 @@ export class UserService {
       });
   }
 
-  isAuthenticated(): boolean {
-    if (sessionStorage.getItem("jwt")) {
-      return true;
-    } else {
-      return false;
-    }
+  getUser() {
+    const userId = sessionStorage.getItem("userId");
+    const jwtToken = sessionStorage.getItem("jwt");
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + jwtToken,
+      }),
+    };
+
+    this.http
+      .post(`${this.url}/${userId}`, null, httpOptions)
+      .toPromise()
+      .then((res: any) => {
+        if (res && res.token) {
+          console.log("getUser res = ", res);
+          sessionStorage.setItem("jwt", res.token);
+          this.errorSubject.next(null);
+          console.log("getUser || res.user.id ", res.user.id);
+          console.log("getUser ||  userId ", userId);
+
+          if (res.user.id === Number(userId)) {
+            console.log("getUser || User Matching");
+
+            this.userSubject.next(res.user);
+            this.router.navigateByUrl("/");
+          } else {
+            console.log("getUser || User NOT Matching");
+
+            this.router.navigateByUrl("login");
+          }
+        } else {
+          console.log("getUser || getUser did not return value");
+
+          this.router.navigateByUrl("login");
+        }
+      })
+      .catch((err) => {
+        console.log("getUser error = ", err);
+        console.log(`getUser errorMessage = ${err.status} : ${err.statusText}`);
+        console.log(
+          `getUser errorMessage = ${err.status} : ${err.error.message}`
+        );
+        if (err.status === 504) {
+          this.errorSubject.next(`${err.status} : ${err.statusText}`);
+        } else {
+          this.errorSubject.next(`${err.status} : ${err.error.message}`);
+        }
+        return false;
+      });
+
+    // return this.http.get(`${this.url}/${userId}`, reqHeader);
   }
 }

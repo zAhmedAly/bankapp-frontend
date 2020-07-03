@@ -1,13 +1,15 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
+import { BrowserModule } from "@angular/platform-browser";
+import { NgModule } from "@angular/core";
+import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-import { LoginComponent } from './login/login.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { AccountBalanceComponent } from './account-balance/account-balance.component';
-import { RegisterComponent } from './register/register.component';
+import { AppRoutingModule } from "./app-routing.module";
+import { AppComponent } from "./app.component";
+import { LoginComponent } from "./login/login.component";
+import { DashboardComponent } from "./dashboard/dashboard.component";
+import { AccountBalanceComponent } from "./account-balance/account-balance.component";
+import { RegisterComponent } from "./register/register.component";
+import { UserInterceptor } from "./services/interceptor/user-interceptor";
+import { AuthGuardGuard } from "./services/guards/auth-guard.guard";
 
 @NgModule({
   declarations: [
@@ -15,14 +17,13 @@ import { RegisterComponent } from './register/register.component';
     LoginComponent,
     DashboardComponent,
     AccountBalanceComponent,
-    RegisterComponent
+    RegisterComponent,
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    HttpClientModule
+  imports: [BrowserModule, AppRoutingModule, HttpClientModule],
+  providers: [
+    AuthGuardGuard,
+    //{ provide: HTTP_INTERCEPTORS, useClass: UserInterceptor, multi: true },
   ],
-  providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
