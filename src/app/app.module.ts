@@ -10,6 +10,7 @@ import { AccountBalanceComponent } from "./account-balance/account-balance.compo
 import { RegisterComponent } from "./register/register.component";
 import { UserInterceptor } from "./services/interceptor/user-interceptor";
 import { AuthGuardGuard } from "./services/guards/auth-guard.guard";
+import { NavbarComponent } from './navbar/navbar.component';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { AuthGuardGuard } from "./services/guards/auth-guard.guard";
     DashboardComponent,
     AccountBalanceComponent,
     RegisterComponent,
+    NavbarComponent,
   ],
   imports: [BrowserModule, AppRoutingModule, HttpClientModule],
   providers: [

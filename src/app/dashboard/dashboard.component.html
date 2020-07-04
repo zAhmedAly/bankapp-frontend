@@ -1,8 +1,8 @@
 <div id="dashboard-component" class="container mx-auto grid">
-  <div class="flex mb-4 mt-24">
-    <div class="mx-auto">
+  <div class="flex mb-4 mt-12">
+    <div class="mx-auto" *ngIf="user">
       <h3 class="text-gray-700 font-normal mx-auto">
-        Hi {{ user ? user.username : "" }}, here is your dashboard:
+        Hi {{ user.username }}, here is your dashboard:
       </h3>
     </div>
   </div>
