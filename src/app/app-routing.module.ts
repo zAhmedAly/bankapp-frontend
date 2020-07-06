@@ -7,6 +7,7 @@ import { LoginComponent } from "./login/login.component";
 import { DashboardComponent } from "./dashboard/dashboard.component";
 import { RegisterComponent } from "./register/register.component";
 import { AccountBalanceComponent } from "./account-balance/account-balance.component";
+import { HomeComponent } from "./home/home.component";
 
 // const routes: Routes = [
 //   { path: "", component: LoginComponent },
@@ -16,11 +17,12 @@ import { AccountBalanceComponent } from "./account-balance/account-balance.compo
 // ];
 
 const routes: Routes = [
+  { path: "", component: HomeComponent },
   { path: "login", component: LoginComponent },
   { path: "register", component: RegisterComponent },
   { path: "accountBalance", component: AccountBalanceComponent },
   {
-    path: "",
+    path: "dashboard",
     component: DashboardComponent,
     canActivate: [AuthGuardGuard],
     resolve: { user: UserResolverService },

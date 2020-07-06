@@ -10,7 +10,8 @@ import { AccountBalanceComponent } from "./account-balance/account-balance.compo
 import { RegisterComponent } from "./register/register.component";
 import { UserInterceptor } from "./services/interceptor/user-interceptor";
 import { AuthGuardGuard } from "./services/guards/auth-guard.guard";
-import { NavbarComponent } from './navbar/navbar.component';
+import { NavbarComponent } from "./navbar/navbar.component";
+import { HomeComponent } from "./home/home.component";
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { NavbarComponent } from './navbar/navbar.component';
     AccountBalanceComponent,
     RegisterComponent,
     NavbarComponent,
+    HomeComponent,
   ],
   imports: [BrowserModule, AppRoutingModule, HttpClientModule],
   providers: [

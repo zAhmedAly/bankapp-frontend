@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, EventEmitter } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { BehaviorSubject } from "rxjs";
 import { Router } from "@angular/router";
@@ -19,6 +19,8 @@ export class UserService {
   userSubject: any = new BehaviorSubject<any>(null);
   user: any = this.userSubject.asObservable();
 
+  authChanged: EventEmitter<any> = new EventEmitter();
+
   constructor(private http: HttpClient, private router: Router) {}
 
   login(Username: string, Password: string): any {
@@ -34,8 +36,9 @@ export class UserService {
             console.log("LOGIN res.user = ", res.user);
             this.userSubject.next(res.user);
             sessionStorage.setItem("userId", res.user.id);
+            this.authChanged.emit(true);
           }
-          this.router.navigateByUrl("");
+          this.router.navigateByUrl("dashboard");
         } else if (res.Message) {
           this.errorSubject.next(res.Message);
         }
@@ -68,7 +71,7 @@ export class UserService {
             this.userSubject.next(res.user);
             // sessionStorage.setItem("userId", res.user.ID);
           }
-          this.router.navigateByUrl("");
+          this.router.navigateByUrl("dashboard");
         } else if (res.Message) {
           this.errorSubject.next(res.Message);
         }
@@ -116,7 +119,7 @@ export class UserService {
             console.log("getUser || User Matching");
 
             this.userSubject.next(res.user);
-            this.router.navigateByUrl("/");
+            this.router.navigateByUrl("dashboard");
           } else {
             console.log("getUser || User NOT Matching");
 
@@ -143,5 +146,16 @@ export class UserService {
       });
 
     // return this.http.get(`${this.url}/${userId}`, reqHeader);
+  }
+
+  /**
+   * Logout of Interface
+   * @returns boolean
+   */
+  logOut(): boolean {
+    sessionStorage.clear();
+    this.authChanged.emit(false);
+    this.router.navigateByUrl("/");
+    return true;
   }
 }

@@ -1,15 +1,39 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
+import { UserService } from "../services/user/user.service";
 
 @Component({
-  selector: 'app-navbar',
-  templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.scss']
+  selector: "app-navbar",
+  templateUrl: "./navbar.component.html",
+  styleUrls: ["./navbar.component.scss"],
 })
 export class NavbarComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit(): void {
+  authedUser: boolean = false;
+  constructor(private router: Router, private userService: UserService) {
+    this.userService.authChanged.subscribe((user) => {
+      // user will be false if logged out
+      // or user object if logged in.
+      this.authedUser = user;
+      console.log(
+        "NavbarComponent constructor || authChanged = ",
+        this.authedUser
+      );
+    });
   }
 
+  ngOnInit(): void {
+    this.userService.authChanged.subscribe((user) => {
+      // user will be false if logged out
+      // or user object if logged in.
+      this.authedUser = user;
+      console.log(
+        "NavbarComponent ngOnInit || authChanged = ",
+        this.authedUser
+      );
+    });
+  }
+
+  doLogOut() {
+    this.userService.logOut();
+  }
 }
