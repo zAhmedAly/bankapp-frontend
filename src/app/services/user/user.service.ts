@@ -1,6 +1,6 @@
 import { Injectable, EventEmitter } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, Subject } from "rxjs";
 import { Router } from "@angular/router";
 
 const httpOptions = {
@@ -21,6 +21,9 @@ export class UserService {
 
   authChanged: EventEmitter<any> = new EventEmitter();
 
+  isLoggedInSubject: Subject<boolean> = new Subject();
+  isLoggedIn = false;
+
   constructor(private http: HttpClient, private router: Router) {}
 
   login(Username: string, Password: string): any {
@@ -37,6 +40,9 @@ export class UserService {
             this.userSubject.next(res.user);
             sessionStorage.setItem("userId", res.user.id);
             this.authChanged.emit(true);
+            this.isLoggedIn = true;
+            console.log("UserService login || STATUS = ", this.isLoggedIn);
+            this.isLoggedInSubject.next(this.isLoggedIn);
           }
           this.router.navigateByUrl("dashboard");
         } else if (res.Message) {
@@ -70,6 +76,9 @@ export class UserService {
             console.log("REGISTER res.user = ", res.user);
             this.userSubject.next(res.user);
             // sessionStorage.setItem("userId", res.user.ID);
+            this.isLoggedIn = true;
+            console.log("UserService register || STATUS = ", this.isLoggedIn);
+            this.isLoggedInSubject.next(this.isLoggedIn);
           }
           this.router.navigateByUrl("dashboard");
         } else if (res.Message) {
@@ -119,15 +128,28 @@ export class UserService {
             console.log("getUser || User Matching");
 
             this.userSubject.next(res.user);
+            this.isLoggedIn = true;
+            console.log("UserService getUser || STATUS = ", this.isLoggedIn);
+            this.isLoggedInSubject.next(this.isLoggedIn);
             this.router.navigateByUrl("dashboard");
           } else {
             console.log("getUser || User NOT Matching");
-
+            this.isLoggedIn = false;
+            console.log(
+              "UserService getUser || STATUS FALSE #1 = ",
+              this.isLoggedIn
+            );
+            this.isLoggedInSubject.next(this.isLoggedIn);
             this.router.navigateByUrl("login");
           }
         } else {
           console.log("getUser || getUser did not return value");
-
+          this.isLoggedIn = false;
+          console.log(
+            "UserService getUser || STATUS FALSE #2 = ",
+            this.isLoggedIn
+          );
+          this.isLoggedInSubject.next(this.isLoggedIn);
           this.router.navigateByUrl("login");
         }
       })
@@ -155,6 +177,9 @@ export class UserService {
   logOut(): boolean {
     sessionStorage.clear();
     this.authChanged.emit(false);
+    this.isLoggedIn = false;
+    console.log("UserService logOut || STATUS FALSE = ", this.isLoggedIn);
+    this.isLoggedInSubject.next(this.isLoggedIn);
     this.router.navigateByUrl("/");
     return true;
   }

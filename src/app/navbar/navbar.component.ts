@@ -9,7 +9,15 @@ import { UserService } from "../services/user/user.service";
 })
 export class NavbarComponent implements OnInit {
   authedUser: boolean = false;
+
+  isLoggedIn = false;
+
   constructor(private router: Router, private userService: UserService) {
+    this.userService.isLoggedInSubject.subscribe((status) => {
+      console.log("NavbarComponent ngOnInit || STATUS = ", status);
+      this.isLoggedIn = status;
+    });
+
     this.userService.authChanged.subscribe((user) => {
       // user will be false if logged out
       // or user object if logged in.
@@ -22,6 +30,11 @@ export class NavbarComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.userService.isLoggedInSubject.subscribe((status) => {
+      console.log("NavbarComponent ngOnInit || STATUS = ", status);
+      this.isLoggedIn = status;
+    });
+
     this.userService.authChanged.subscribe((user) => {
       // user will be false if logged out
       // or user object if logged in.

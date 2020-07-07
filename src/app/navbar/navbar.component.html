@@ -31,7 +31,7 @@
   </div>
   <div
     class="w-full block flex-grow lg:flex lg:items-center lg:w-auto"
-    *ngIf="authedUser"
+    *ngIf="isLoggedIn"
   >
     <div class="text-sm lg:flex-grow">
       <a
@@ -44,7 +44,7 @@
     </div>
   </div>
   <ul class="flex justify-between">
-    <li class="mr-3" *ngIf="!authedUser">
+    <li class="mr-3" *ngIf="!isLoggedIn">
       <a
         [routerLink]="['/login']"
         routerLinkActive="router-link-active"
@@ -52,7 +52,7 @@
         >Log In</a
       >
     </li>
-    <li class="mr-3" *ngIf="!authedUser">
+    <li class="mr-3" *ngIf="!isLoggedIn">
       <a
         [routerLink]="['/register']"
         routerLinkActive="router-link-active"
@@ -60,7 +60,7 @@
         >Register</a
       >
     </li>
-    <li class="mr-3" *ngIf="authedUser">
+    <li class="mr-3" *ngIf="isLoggedIn">
       <a
         (click)="doLogOut()"
         routerLinkActive="router-link-active"
